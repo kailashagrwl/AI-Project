@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Passport Validity Checker - VeeGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>VeeGo <span class="highlight">🌍</span></h1>
+            <p class="subtitle">Passport Validity Checker</p>
+        </header>
+
+        <main>
+            <div class="passport-checker-container">
+                <div class="checker-card">
+                    <h2>Check Your Passport Validity</h2>
+                    <p>Many countries require your passport to be valid for at least 6 months beyond your planned departure date.</p>
+                    
+                    <form id="passport-form">
+                        <div class="form-group">
+                            <label for="passport-number">Passport Number:</label>
+                            <input type="text" id="passport-number" required placeholder="Enter your passport number (e.g., IND123456)">
+                            <small class="form-hint">Try with numbers from the database like: IND999888, IND971139, IND788282</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="travel-date">Planned Travel Date:</label>
+                            <input type="date" id="travel-date" required>
+                        </div>
+                        
+                        <button type="submit" id="check-validity-btn" class="primary-btn">
+                            Check Validity
+                        </button>
+                    </form>
+
+                    <div id="loading" class="loading-indicator" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Checking passport validity...</p>
+                    </div>
+                </div>
+                
+                <div id="result-container" class="result-container" style="display: none;">
+                    <!-- Results will be shown here -->
+                </div>
+                
+                <div class="back-link">
+                    <a href="/" class="btn-link">← Back to Chatbot</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>VeeGo – Your AI Visa Assistant 🌍✈️</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('passport-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const passportNumber = document.getElementById('passport-number').value.trim();
+            const travelDate = document.getElementById('travel-date').value;
+            
+            if (!passportNumber || !travelDate) {
+                alert('Please enter both passport number and travel date');
+                return;
+            }
+            
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('result-container').style.display = 'none';
+            
+            // Call the API to validate the passport
+            fetch('/api/validate-passport', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    passport_number: passportNumber,
+                    travel_date: travelDate
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+                
+                // Display the result
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.style.display = 'block';
+                
+                const dataSourceText = data.found_in_database ? 
+                    `<div class="data-source verified">✓ Passport verified in database</div>` : 
+                    `<div class="data-source simulated">⚠️ Passport not found in database</div>`;
+                
+                // Prepare passport holder info
+                let holderInfo = '';
+                if (data.found_in_database && data.name !== "Not Available") {
+                    holderInfo = `
+                        <div class="passport-holder-info">
+                            <h4>Passport Holder Details</h4>
+                            <div class="holder-detail">
+                                <span class="holder-label">Name:</span>
+                                <span class="holder-value">${data.name}</span>
+                            </div>
+                            <div class="holder-detail">
+                                <span class="holder-label">Nationality:</span>
+                                <span class="holder-value">${data.nationality}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Get reason for invalidity if available
+                const reasonInfo = data.reason ? 
+                    `<div class="reason-info">${data.reason}</div>` : '';
+                
+                if (data.is_valid) {
+                    // Valid passport
+                    resultContainer.innerHTML = `
+                        <div class="result valid">
+                            <div class="result-icon">✅</div>
+                            <h3>Passport Valid</h3>
+                            <p>Your passport is valid for at least 6 months beyond your travel date.</p>
+                            ${dataSourceText}
+                            ${holderInfo}
+                            <div class="validity-details">
+                                <p>Passport Number: ${data.passport_number}</p>
+                                <p>Expiry Date: ${formatDate(data.expiry_date)}</p>
+                                <p>Travel Date: ${formatDate(data.travel_date)}</p>
+                                <p>Required Validity: ${formatDate(data.required_validity)}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Not valid
+                    let validityDetails = '';
+                    
+                    // Only show validity details for passports found in database
+                    if (data.found_in_database) {
+                        validityDetails = `
+                            <div class="validity-details">
+                                <p>Passport Number: ${data.passport_number}</p>
+                                <p>Expiry Date: ${formatDate(data.expiry_date)}</p>
+                                <p>Travel Date: ${formatDate(data.travel_date)}</p>
+                                <p>Required Validity: ${formatDate(data.required_validity)}</p>
+                            </div>
+                        `;
+                    } else {
+                        validityDetails = `
+                            <div class="validity-details">
+                                <p>Passport Number: ${data.passport_number}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    resultContainer.innerHTML = `
+                        <div class="result invalid">
+                            <div class="result-icon">⚠️</div>
+                            <h3>Passport Invalid</h3>
+                            <p>Your passport is not valid for international travel.</p>
+                            ${dataSourceText}
+                            ${reasonInfo}
+                            ${holderInfo}
+                            ${validityDetails}
+                            <div class="recommendation">
+                                <p>Recommendation: Verify your passport number or apply for a valid passport.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+                
+                // Show error message
+                const resultContainer = document.getElementById('result-container');
+                resultContainer.style.display = 'block';
+                resultContainer.innerHTML = `
+                    <div class="result invalid">
+                        <div class="result-icon">❌</div>
+                        <h3>Error</h3>
+                        <p>There was an error checking your passport validity. Please try again later.</p>
+                        <p class="error-details">${error.message}</p>
+                    </div>
+                `;
+            });
+        });
+        
+        // Format date as DD/MM/YYYY
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        }
+    </script>
+</body>
+</html> 

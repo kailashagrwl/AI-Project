@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to VeeGo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            width: 100%;
+            padding: 20px;
+            background-color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 1.5em;
+            color: #fff;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .landing-container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            margin: 40px auto;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            animation: slideIn 1.5s ease-in-out;
+        }
+
+        .content {
+            flex: 1;
+            padding: 60px;
+            background-color: #fff;
+        }
+
+        .image {
+            flex: 1;
+            background: url("{{ url_for('static', filename='images/visa_background.jpg') }}") no-repeat center center;
+            background-size: cover;
+        }
+
+        .title {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+            animation: fadeIn 2.5s ease-in-out;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            animation: bounce 3s infinite;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+            transform: translateY(-5px);
+        }
+
+        .footer {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">VeeGo Visa Services</div>
+    <div class="landing-container">
+        <div class="content">
+            <h1 class="title">Do you need a visa for your trip?</h1>
+            <p class="subtitle">The quickest, easiest way to find out whether you need a visa for your trip and make sure it arrives before you leave.</p>
+            <a href="{{ url_for('chat') }}" class="button">Start Checking Visa Requirements</a>
+            <p class="footer">VeeGo is not a government agency. We are a private company that partners with registered government couriers to expedite your application.</p>
+        </div>
+        <div class="image"></div>
+    </div>
+</body>
+</html> 

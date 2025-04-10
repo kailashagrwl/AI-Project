@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VeeGo - Making Visas Very Simple</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ... existing styles ... */
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            background-color: #1e3a5f;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px 40px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .mascot-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff6f61;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #ff6f61;
+            font-size: 2em;
+        }
+
+        .header .subtitle {
+            margin: 5px 0 0 0;
+            color: #ffffff;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <img src="{{ url_for('static', filename='images/mascot.jpeg') }}" alt="VeeGo Mascot" class="mascot-image">
+                <div class="header-text">
+                    <h1>VeeGo <span class="highlight"></span></h1>
+                    <p class="subtitle">Because international borders love paperwork – let VeeGo deal with it while you sip chai.</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div id="chat-container"></div>
+            <div id="input-container">
+                <input type="text" id="user-input" placeholder="Ask about visa requirements... (e.g., 'Visa for Indians traveling to USA')">
+                <button id="send-btn">
+                    <span>Send</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">Travel Tools</div>
+                <div class="tool-buttons">
+                    <a href="/passport-checker" class="tool-button">
+                        <span class="tool-icon">📘</span>
+                        <span>Passport Validity Checker</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>VeeGo – Your AI Visa Assistant 🌍✈️</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
+        
